@@ -1,0 +1,339 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { VARIETIES, breadcrumbSchema } from '../utils/varieties';
+
+const verifiedCount = VARIETIES.filter(v => v.has_canonical_en).length;
+const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const jsonLd = breadcrumbSchema([
+  { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
+  { name: 'Colophon', url: 'https://library.en.seed.ua/about/' },
+]);
+---
+
+<BaseLayout
+  title="Colophon · About this catalogue"
+  description="Methodology, sources, and citation information for the Catalogue of Solanum lycopersicum — Lazariev heirloom tomato library."
+  jsonLd={jsonLd}
+>
+
+  <div class="container">
+    <nav class="breadcrumbs">
+      <a href="/">Catalogue</a>
+      <span>/</span>
+      Colophon
+    </nav>
+  </div>
+
+  <header class="col-header">
+    <div class="container">
+      <div class="col-id">A.03 · Colophon</div>
+      <h1 class="col-title">About this <em>catalogue</em></h1>
+      <p class="col-subtitle">
+        Methodology, sources, and citation information.
+      </p>
+    </div>
+  </header>
+
+  <section class="col-section">
+    <div class="container">
+      <div class="col-grid">
+        <div class="col-label">Source material</div>
+        <div class="col-body">
+          <p>
+            The Lazariev family seed collection in Ukraine has been actively curating heirloom and
+            open-pollinated tomato cultivars since 1991, with an emphasis on Eastern European varieties
+            not commonly available in North American or Western European catalogues.
+          </p>
+          <p>
+            The primary source for this catalogue is the Ukrainian-language master catalogue
+            <em>catalog_2026_01.docx</em>, maintained by the family. Each cultivar entry includes
+            morphological observations recorded across multiple growing seasons.
+          </p>
+          <p>
+            For the present English edition, cultivar names have been cross-referenced with several
+            international heirloom databases to identify canonical names.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="col-section bordered">
+    <div class="container">
+      <div class="col-grid">
+        <div class="col-label">Reference databases</div>
+        <div class="col-body">
+          <ul class="ref-list">
+            <li>
+              <strong>Tatiana TOMATObase</strong> — comprehensive heirloom tomato database maintained
+              by Tatiana Kouchnareva (Anmore, Canada). Primary reference for canonical English names of
+              Russian, Ukrainian, and Eastern European cultivars.
+              <span class="ref-url">tatianastomatobase.com</span>
+            </li>
+            <li>
+              <strong>Baker Creek Heirloom Seeds</strong> — extensive heirloom catalog with detailed
+              variety histories. Reference for North American and international heirloom names.
+              <span class="ref-url">rareseeds.com</span>
+            </li>
+            <li>
+              <strong>Dwarf Tomato Project</strong> — collaborative breeding project by Craig LeHoullier
+              (USA) and Patrina Nuske-Small (Australia). Authoritative source for dwarf tomato cultivar names.
+              <span class="ref-url">dwarftomatoproject.net</span>
+            </li>
+            <li>
+              <strong>Семко-Юниор / Sortinfo</strong> — Russian-language seed registries for
+              transliteration verification of Russian and Ukrainian cultivar names.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="col-section bordered">
+    <div class="container">
+      <div class="col-grid">
+        <div class="col-label">Methodology</div>
+        <div class="col-body">
+          <p>
+            Each entry in this catalogue includes plant height (in metres), average fruit weight (in grams),
+            primary fruit form, fruit colour profile, and a descriptive note from the original
+            Ukrainian source material.
+          </p>
+          <p>
+            Of {VARIETIES.length} total cultivars, <strong>{verifiedCount}</strong> have canonical English
+            heirloom names confirmed via the reference databases above. The remaining cultivars use
+            transliterated Ukrainian names; these may be updated as additional verification work is completed.
+          </p>
+          <p>
+            <strong>Categories</strong> reflect the cultivar's primary morphological character. Some varieties
+            could reasonably be classified under multiple categories — for instance, a black-fruited dwarf
+            cultivar might appear under either "Black-fruited" or "Dwarf" depending on the gardener's
+            primary interest. The classification used here reflects the source catalogue's organization.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="col-section bordered">
+    <div class="container">
+      <div class="col-grid">
+        <div class="col-label">Citation</div>
+        <div class="col-body">
+          <div class="citation-box">
+            <div class="citation-text">
+              Lazariev, O., Lazarieva, O. (2026). <em>Catalogue of Solanum lycopersicum:
+              Lazariev Heirloom Tomato Library, Volume I, Edition 2026.01.</em>
+              Seed.ua, Ukraine. Retrieved from https://library.en.seed.ua/
+            </div>
+            <button class="citation-copy" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText); this.textContent='Copied'">
+              Copy citation
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="col-section bordered">
+    <div class="container">
+      <div class="col-grid">
+        <div class="col-label">Contact</div>
+        <div class="col-body">
+          <p>
+            For inquiries about specific cultivars, seed orders, or to suggest corrections to
+            this catalogue, please contact the publisher:
+          </p>
+          <ul class="contact-list">
+            <li><strong>Catalogue editorial:</strong> <a href="mailto:elena@lazareva.info">elena@lazareva.info</a></li>
+            <li><strong>Seed orders (international):</strong> <a href="https://en.seed.ua">en.seed.ua</a></li>
+            <li><strong>Seed orders (Ukraine):</strong> <a href="https://seed.ua">seed.ua</a></li>
+            <li><strong>Source data:</strong> Available on request for academic and conservation use</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="col-section">
+    <div class="container">
+      <div class="col-version">
+        <div class="version-row">
+          <span class="version-label">Edition</span>
+          <span class="version-value">2026.01</span>
+        </div>
+        <div class="version-row">
+          <span class="version-label">Last updated</span>
+          <span class="version-value">{today}</span>
+        </div>
+        <div class="version-row">
+          <span class="version-label">Total cultivars</span>
+          <span class="version-value">{VARIETIES.length}</span>
+        </div>
+        <div class="version-row">
+          <span class="version-label">Verified canonical names</span>
+          <span class="version-value">{verifiedCount}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .col-header {
+    padding: 56px 0 40px;
+    border-bottom: 2px solid var(--rule);
+  }
+  .col-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .col-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(48px, 6vw, 78px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .col-title em { font-style: italic; }
+  .col-subtitle {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .col-section {
+    padding: 56px 0;
+  }
+  .col-section.bordered {
+    border-top: 1px solid var(--rule);
+  }
+
+  .col-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 56px;
+  }
+
+  .col-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-top: 4px;
+  }
+
+  .col-body p {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 18px;
+    max-width: 720px;
+  }
+
+  .col-body p:last-child { margin-bottom: 0; }
+
+  .ref-list,
+  .contact-list {
+    list-style: none;
+    max-width: 720px;
+  }
+
+  .ref-list li,
+  .contact-list li {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .ref-list li:last-child,
+  .contact-list li:last-child { border-bottom: none; }
+
+  .ref-url {
+    display: block;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .citation-box {
+    background: var(--paper-shade);
+    padding: 24px;
+    max-width: 720px;
+    border-left: 3px solid var(--accent);
+  }
+
+  .citation-text {
+    font-family: var(--serif);
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .citation-copy {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .citation-copy:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .col-version {
+    max-width: 480px;
+    border: 1px solid var(--rule);
+  }
+
+  .version-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--rule-soft);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .version-row:last-child { border-bottom: none; }
+
+  .version-label {
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 10px;
+  }
+  .version-value {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .col-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+</style>

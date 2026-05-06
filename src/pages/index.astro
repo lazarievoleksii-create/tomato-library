@@ -1,0 +1,462 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { VARIETIES, CATEGORY_LABEL, CATEGORY_CODE, CATEGORY_DESCRIPTION } from '../utils/varieties';
+
+const totalCount = VARIETIES.length;
+const verifiedCount = VARIETIES.filter(v => v.has_canonical_en).length;
+
+// Group by category for table of contents
+const byCategory = Object.keys(CATEGORY_CODE).map(catSlug => ({
+  slug: catSlug,
+  code: CATEGORY_CODE[catSlug],
+  label: CATEGORY_LABEL[catSlug],
+  description: CATEGORY_DESCRIPTION[catSlug],
+  count: VARIETIES.filter(v => v.cat === catSlug).length,
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Book',
+  name: 'Catalogue of Solanum lycopersicum',
+  alternateName: 'Lazariev Heirloom Tomato Library',
+  bookEdition: '2026.01',
+  inLanguage: 'en',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Seed.ua',
+    url: 'https://seed.ua',
+  },
+  about: {
+    '@type': 'Thing',
+    name: 'Solanum lycopersicum',
+    description: 'Heirloom and open-pollinated tomato cultivars',
+  },
+  numberOfPages: totalCount,
+  url: 'https://library.en.seed.ua/',
+};
+---
+
+<BaseLayout
+  title="Catalogue of Solanum lycopersicum"
+  description="Scientific catalogue of 331 heirloom and open-pollinated tomato cultivars from the Lazariev collection (Ukraine, est. 1991). Browse by category, compare cultivars, and access seeds via Seed.ua."
+  jsonLd={jsonLd}
+>
+
+  <!-- Title page -->
+  <section class="title-page">
+    <div class="container">
+      <div class="title-meta">
+        <div class="meta-line">Volume I · Edition 2026.01</div>
+        <div class="meta-line accent">Lazariev Collection · Established 1991</div>
+      </div>
+
+      <h1 class="title-main">
+        Catalogue of <em>Solanum<br>lycopersicum</em>
+      </h1>
+
+      <div class="title-attr">
+        A scientific catalogue of {totalCount} heirloom and open-pollinated cultivars,<br>
+        compiled from thirty-five years of breeding work in Ukraine.
+      </div>
+
+      <div class="title-stats">
+        <div class="stat">
+          <div class="stat-num">{totalCount}</div>
+          <div class="stat-label">Cultivars catalogued</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">{verifiedCount}</div>
+          <div class="stat-label">Canonical names verified</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">11</div>
+          <div class="stat-label">Categories indexed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">35</div>
+          <div class="stat-label">Years of selection</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abstract -->
+  <section class="abstract-section">
+    <div class="container">
+      <div class="abstract-grid">
+        <div class="abstract-label">Abstract</div>
+        <div class="abstract-body">
+          <p>
+            This catalogue presents the complete inventory of open-pollinated tomato cultivars
+            curated by the Lazariev family seed collection in Ukraine. Cultivars are organized by
+            morphological category, fruit pigmentation, and growth habit, and cross-referenced
+            with their canonical English heirloom names via Tatiana TOMATObase, Baker Creek
+            Heirloom Seeds, and the Dwarf Tomato Project (Australia/USA).
+          </p>
+          <p>
+            Each entry includes plant height, fruit weight, fruit form, colour profile, and growth notes
+            preserved from the original Ukrainian source material. Where applicable, cultivar names are
+            also given in Russian transliteration and cultural alternates to support discoverability
+            across Ukrainian, Russian, and English-language audiences.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Table of contents -->
+  <section class="toc-section">
+    <div class="container">
+      <div class="toc-grid">
+        <div class="toc-label">Contents</div>
+        <ol class="toc-list">
+          {byCategory.map((cat, i) => (
+            <li class="toc-item">
+              <div class="toc-num">{cat.code}</div>
+              <div class="toc-name">
+                <a href={`/categories/${cat.slug}/`}>{cat.label}</a>
+                <div class="toc-desc">{cat.description}</div>
+              </div>
+              <div class="toc-count">{cat.count}</div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick navigation -->
+  <section class="nav-section">
+    <div class="container">
+      <div class="nav-grid">
+        <div class="nav-label">Browse</div>
+        <div class="nav-cards">
+          <a href="/varieties/" class="nav-card">
+            <div class="card-id">A.01</div>
+            <div class="card-title">Master Index</div>
+            <div class="card-desc">Searchable A–Z table of all {totalCount} cultivars with side-by-side comparison.</div>
+            <div class="card-arrow">→</div>
+          </a>
+          <a href="/categories/" class="nav-card">
+            <div class="card-id">A.02</div>
+            <div class="card-title">By Category</div>
+            <div class="card-desc">Browse 11 morphological categories — from collectible heirlooms to dwarf varieties.</div>
+            <div class="card-arrow">→</div>
+          </a>
+          <a href="/about/" class="nav-card">
+            <div class="card-id">A.03</div>
+            <div class="card-title">Colophon</div>
+            <div class="card-desc">Methodology, data sources, and citation information.</div>
+            <div class="card-arrow">→</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Colophon preview -->
+  <section class="colophon-preview">
+    <div class="container">
+      <div class="col-grid">
+        <div></div>
+        <div class="col-body">
+          <p class="col-quote">
+            "Each cultivar in this collection has been grown out, observed, and described —
+            often across multiple seasons, multiple regions, multiple gardens.
+            What you see here is the result of patient, distributed observation."
+          </p>
+          <div class="col-attribution">— Editorial Note, Vol. I</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  /* Title page — drop-cap energy */
+  .title-page {
+    padding: 96px 0 72px;
+    border-bottom: 2px solid var(--rule);
+  }
+
+  .title-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 56px;
+  }
+
+  .meta-line {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .meta-line.accent { color: var(--accent); }
+
+  .title-main {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(56px, 9vw, 120px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    margin-bottom: 48px;
+  }
+  .title-main em { font-style: italic; }
+
+  .title-attr {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 640px;
+    margin-bottom: 64px;
+  }
+
+  .title-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 32px;
+    border-top: 1px solid var(--rule-soft);
+    padding-top: 32px;
+  }
+
+  .stat-num {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 48px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  /* Abstract */
+  .abstract-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .abstract-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 56px;
+  }
+
+  .abstract-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-top: 4px;
+  }
+
+  .abstract-body p {
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin-bottom: 20px;
+    max-width: 720px;
+  }
+
+  /* Table of contents */
+  .toc-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 56px;
+  }
+
+  .toc-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-top: 4px;
+  }
+
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+  }
+
+  .toc-item {
+    display: grid;
+    grid-template-columns: 64px 1fr 56px;
+    gap: 32px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    align-items: baseline;
+  }
+
+  .toc-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .toc-name a {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .toc-name a:hover { color: var(--accent); }
+
+  .toc-desc {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  .toc-count {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+
+  /* Quick nav cards */
+  .nav-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 56px;
+  }
+
+  .nav-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-top: 4px;
+  }
+
+  .nav-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .nav-card {
+    display: block;
+    padding: 28px 24px;
+    border: 1px solid var(--rule-soft);
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .nav-card:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  .card-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .card-desc {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .card-arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--ink-muted);
+    transition: color 0.15s ease;
+  }
+  .nav-card:hover .card-arrow { color: var(--accent); }
+
+  /* Colophon preview */
+  .colophon-preview {
+    padding: 80px 0;
+  }
+
+  .col-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 56px;
+  }
+
+  .col-quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.45;
+    color: var(--ink);
+    max-width: 720px;
+    letter-spacing: -0.005em;
+  }
+
+  .col-attribution {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 24px;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .title-page { padding: 48px 0 40px; }
+    .abstract-grid, .toc-grid, .nav-grid, .col-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .toc-item {
+      grid-template-columns: 56px 1fr 40px;
+      gap: 16px;
+    }
+    .toc-name a { font-size: 18px; }
+    .col-quote { font-size: 22px; }
+  }
+</style>

@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { VARIETIES, CATEGORY_LABEL, CATEGORY_CODE, CATEGORY_DESCRIPTION, breadcrumbSchema } from '../../utils/varieties';
+
+const categories = Object.keys(CATEGORY_CODE).map(catSlug => ({
+  slug: catSlug,
+  code: CATEGORY_CODE[catSlug],
+  label: CATEGORY_LABEL[catSlug],
+  description: CATEGORY_DESCRIPTION[catSlug],
+  count: VARIETIES.filter(v => v.cat === catSlug).length,
+}));
+
+const jsonLd = breadcrumbSchema([
+  { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
+  { name: 'Categories', url: 'https://library.en.seed.ua/categories/' },
+]);
+---
+
+<BaseLayout
+  title="Categories"
+  description="Browse 331 heirloom tomato cultivars across 11 morphological categories — from rare collectibles to dwarf varieties."
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <nav class="breadcrumbs">
+      <a href="/">Catalogue</a>
+      <span>/</span>
+      Categories
+    </nav>
+  </div>
+
+  <header class="cat-header">
+    <div class="container">
+      <div class="cat-header-id">Section A · Categorical Index</div>
+      <h1 class="cat-title">Eleven <em>categories</em></h1>
+      <p class="cat-subtitle">
+        Cultivars are classified by morphological character — fruit pigmentation, plant habit, growth form.
+        Some varieties belong to multiple categories; the primary classification reflects their dominant trait.
+      </p>
+    </div>
+  </header>
+
+  <section class="cat-grid-section">
+    <div class="container">
+      <div class="cat-grid">
+        {categories.map(cat => (
+          <a href={`/categories/${cat.slug}/`} class="cat-card">
+            <div class="cat-card-header">
+              <span class="cat-card-code">{cat.code}</span>
+              <span class="cat-card-count">{cat.count} entries</span>
+            </div>
+            <h2 class="cat-card-name">{cat.label}</h2>
+            <p class="cat-card-desc">{cat.description}</p>
+            <div class="cat-card-arrow">→</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cat-header {
+    padding: 56px 0 40px;
+    border-bottom: 2px solid var(--rule);
+  }
+  .cat-header-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .cat-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(48px, 6vw, 78px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .cat-title em { font-style: italic; }
+  .cat-subtitle {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 720px;
+  }
+
+  .cat-grid-section { padding: 56px 0 80px; }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--rule-soft);
+    border-left: 1px solid var(--rule-soft);
+  }
+
+  .cat-card {
+    display: block;
+    padding: 32px 28px 80px;
+    border-right: 1px solid var(--rule-soft);
+    border-bottom: 1px solid var(--rule-soft);
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    position: relative;
+    transition: background 0.15s ease;
+  }
+  .cat-card:hover { background: var(--paper-shade); }
+  .cat-card:hover .cat-card-arrow { color: var(--accent); transform: translateX(4px); }
+
+  .cat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 24px;
+  }
+
+  .cat-card-code {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .cat-card-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .cat-card-name {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 32px;
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+
+  .cat-card-desc {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  .cat-card-arrow {
+    position: absolute;
+    bottom: 24px;
+    left: 28px;
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--ink-muted);
+    transition: all 0.15s ease;
+  }
+</style>

@@ -1,0 +1,1071 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { VARIETIES, breadcrumbSchema } from '../../utils/varieties';
+
+const totalCount = VARIETIES.length;
+const verifiedCount = VARIETIES.filter(v => v.has_canonical_en).length;
+
+// Sort by English name for default A-Z
+const sorted = [...VARIETIES].sort((a, b) => a.name_en.localeCompare(b.name_en));
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
+    { name: 'Index of Cultivars', url: 'https://library.en.seed.ua/varieties/' },
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Index of Cultivars',
+    description: `Complete A–Z index of ${totalCount} open-pollinated tomato cultivars in the Lazariev collection.`,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: totalCount,
+      itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Index of Cultivars"
+  description={`Complete A–Z index of ${totalCount} open-pollinated tomato cultivars in the Lazariev collection. Searchable, filterable, with side-by-side comparison.`}
+  jsonLd={jsonLd}
+>
+
+  <div class="container">
+    <nav class="breadcrumbs">
+      <a href="/">Catalogue</a>
+      <span>/</span>
+      Index of Cultivars
+    </nav>
+  </div>
+
+  <header class="idx-header">
+    <div class="container">
+      <div class="idx-id">Master Index · {totalCount} entries · v2.0</div>
+      <h1 class="idx-title">Index of <em>Cultivars</em></h1>
+      <div class="idx-subtitle">All catalogued cultivars of Solanum lycopersicum, A through Z.</div>
+      <div class="idx-hint">
+        Tip — select up to <strong>4 cultivars</strong> using the checkboxes to compare them side by side.<br>
+        The <strong style="color:#2d5a2d">VERIFIED</strong> badge indicates {verifiedCount} cultivars with canonical English heirloom names confirmed via Tatiana TOMATObase, Baker Creek, and the Dwarf Tomato Project.
+      </div>
+    </div>
+  </header>
+
+  <section class="search-wrap">
+    <div class="container">
+      <div class="search-grid">
+        <div class="label-mono">Search</div>
+        <div class="search-box">
+          <input type="text" id="search-input" class="search-input"
+            placeholder="Search by name in English or Ukrainian — e.g. 'Brandywine' or 'Бренді'…"
+            autocomplete="off" />
+          <span class="search-shortcut">⌘ K</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="filter-panel">
+    <div class="container">
+      <div class="filter-panel-grid">
+        <div class="label-mono">Filter</div>
+        <div class="filter-groups">
+          <div class="filter-row">
+            <span class="filter-row-label">Colour</span>
+            <div class="filter-row-buttons">
+              <button class="filter swatch" data-filter-group="color" data-filter-value="red"><span class="swatch-dot dot-red"></span>Red</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="pink"><span class="swatch-dot dot-pink"></span>Pink</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="yellow"><span class="swatch-dot dot-yellow"></span>Yellow</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="orange"><span class="swatch-dot dot-orange"></span>Orange</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="black"><span class="swatch-dot dot-black"></span>Black</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="chocolate"><span class="swatch-dot dot-chocolate"></span>Chocolate</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="purple"><span class="swatch-dot dot-purple"></span>Purple</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="green"><span class="swatch-dot dot-green"></span>Green</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="white"><span class="swatch-dot dot-white"></span>White</button>
+              <button class="filter swatch" data-filter-group="color" data-filter-value="bicolor"><span class="swatch-dot dot-bicolor"></span>Bicolor</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <span class="filter-row-label">Category</span>
+            <div class="filter-row-buttons">
+              <button class="filter" data-filter-group="cat" data-filter-value="collectible">Collectible</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="red">Red</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="pink">Pink</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="yellow">Yellow</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="black">Black</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="bicolor">Bicolor</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="cherry">Cherry</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="dwarf">Dwarf</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="stem">Stem</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="long-bearing">Long-bearing</button>
+              <button class="filter" data-filter-group="cat" data-filter-value="promo">Established</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <span class="filter-row-label">Form</span>
+            <div class="filter-row-buttons">
+              <button class="filter" data-filter-group="shape" data-filter-value="heart-shaped">Heart-shaped</button>
+              <button class="filter" data-filter-group="shape" data-filter-value="flat-round">Flat-round</button>
+              <button class="filter" data-filter-group="shape" data-filter-value="round">Round</button>
+              <button class="filter" data-filter-group="shape" data-filter-value="plum">Plum</button>
+              <button class="filter" data-filter-group="shape" data-filter-value="pepper-shaped">Pepper</button>
+              <button class="filter" data-filter-group="shape" data-filter-value="elongated">Elongated</button>
+              <button class="filter" data-filter-group="shape" data-filter-value="pear-shaped">Pear</button>
+              <button class="filter" data-filter-group="shape" data-filter-value="icicle">Icicle</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <span class="filter-row-label">Size</span>
+            <div class="filter-row-buttons">
+              <button class="filter" data-filter-group="size" data-filter-value="cherry-plum">Cherry / plum &lt; 100 g</button>
+              <button class="filter" data-filter-group="size" data-filter-value="medium">Medium 100–400 g</button>
+              <button class="filter" data-filter-group="size" data-filter-value="beefsteak">Beefsteak &gt; 400 g</button>
+            </div>
+          </div>
+          <div class="filter-row">
+            <span class="filter-row-label">Habit</span>
+            <div class="filter-row-buttons">
+              <button class="filter" data-filter-group="habit" data-filter-value="compact">Compact &lt; 1 m</button>
+              <button class="filter" data-filter-group="habit" data-filter-value="standard">Standard 1–1.2 m</button>
+              <button class="filter" data-filter-group="habit" data-filter-value="tall">Tall &gt; 1.2 m</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="summary-bar">
+    <div class="container">
+      <div class="summary-row">
+        <div class="summary-text">
+          Showing <strong id="visible-count">{totalCount}</strong> of <strong>{totalCount}</strong> entries
+          <button class="reset hidden" id="reset-btn">Clear all</button>
+        </div>
+        <div class="sort-controls">
+          <label class="verified-toggle" id="verified-toggle">
+            <input type="checkbox" id="verified-checkbox" />
+            <span>Verified only</span>
+          </label>
+          <span class="sort-label" style="margin-left:12px;">Sort</span>
+          <button class="sort-btn active" data-sort="name">A–Z</button>
+          <button class="sort-btn" data-sort="height">Height <span class="arrow">↑</span></button>
+          <button class="sort-btn" data-sort="weight">Weight <span class="arrow">↑</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="alpha-nav">
+    <div class="container">
+      <div class="alpha-nav-grid">
+        <div class="label-mono">Jump to</div>
+        <div class="alpha-letters" id="alpha-nav"></div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <div class="table-wrap">
+        <table class="var-table">
+          <thead>
+            <tr>
+              <th class="no-sort compare-cell"></th>
+              <th class="no-sort" style="width:90px;">ID</th>
+              <th class="sortable sorted" data-sort="name" style="width:240px;">Cultivar <span class="sort-arrow">↓</span></th>
+              <th class="no-sort" style="width:120px;">Category</th>
+              <th class="num sortable" data-sort="height" style="width:60px;">H, m <span class="sort-arrow">↕</span></th>
+              <th class="num sortable" data-sort="weight" style="width:70px;">Wt, g <span class="sort-arrow">↕</span></th>
+              <th class="no-sort" style="width:130px;">Form</th>
+              <th class="no-sort" style="width:90px;">Colour</th>
+              <th class="no-sort" style="width:30px;"></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <div class="empty-state" id="empty-state">
+          <div class="label-mono">No matches</div>
+          <h3>No cultivars match the current filters</h3>
+          <p>Try removing one of the filters or clearing the search to see more results.</p>
+          <button id="empty-clear-btn">Clear all filters</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compare drawer (sticky bottom) -->
+  <div class="compare-drawer" id="compare-drawer">
+    <div class="container">
+      <div class="drawer-row">
+        <div class="compare-drawer-label">Compare<br><span style="color: rgba(255,255,255,0.3); font-size: 9px;">up to 4 cultivars</span></div>
+        <div class="compare-chips" id="compare-chips"></div>
+        <div class="compare-actions">
+          <button class="compare-btn" id="compare-clear">Clear</button>
+          <button class="compare-btn primary" id="compare-open" disabled>Compare <span id="compare-count">0</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare modal -->
+  <div class="compare-modal" id="compare-modal">
+    <div class="compare-modal-content">
+      <header class="compare-modal-header">
+        <div>
+          <h2 class="compare-modal-title">Side-by-side <em>comparison</em></h2>
+          <div class="compare-modal-subtitle" id="compare-modal-subtitle">Comparing 0 cultivars</div>
+        </div>
+        <button class="compare-close" id="compare-close-btn">Close ✕</button>
+      </header>
+      <div class="compare-table-wrap">
+        <table class="compare-table" id="compare-table">
+          <colgroup id="compare-colgroup"></colgroup>
+          <thead id="compare-thead"></thead>
+          <tbody id="compare-tbody"></tbody>
+        </table>
+      </div>
+      <div class="compare-modal-footer">
+        <span>Highlighted cells show distinguishing values</span>
+        <button id="compare-footer-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded data -->
+  <script id="varieties-data" type="application/json" set:html={JSON.stringify(sorted)}></script>
+
+  <!-- Index interaction script -->
+  <script src="/index-script.js" is:inline></script>
+
+</BaseLayout>
+
+<style>
+  /* ========== Index page styles ==========
+     (Most use design tokens from global.css)
+  */
+
+  .idx-header {
+    padding: 56px 0 40px;
+    border-bottom: 2px solid var(--rule);
+  }
+
+  .idx-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+
+  .idx-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(48px, 6vw, 78px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .idx-title em { font-style: italic; }
+
+  .idx-subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink-soft);
+    margin-bottom: 32px;
+  }
+
+  .idx-hint {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .idx-hint strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Search */
+  .search-wrap {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .search-grid,
+  .filter-panel-grid,
+  .alpha-nav-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .search-box {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    border: 1px solid var(--rule);
+    padding: 14px 18px;
+    background: var(--paper);
+  }
+  .search-box:focus-within { border-color: var(--accent); }
+  .search-box::before {
+    content: '⌕';
+    font-size: 18px;
+    color: var(--ink-muted);
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .search-input::placeholder {
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  .search-shortcut {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Filter panel */
+  .filter-panel {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .filter-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .filter-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .filter-row-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .filter-row-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .filter {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 6px 12px;
+    border: 1px solid var(--rule-soft);
+    background: var(--paper);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    font-weight: 500;
+  }
+  .filter:hover {
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  .filter.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .filter[data-disabled="true"] {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .filter.swatch {
+    padding: 4px 12px 4px 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Summary bar */
+  .summary-bar {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .summary-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+  .summary-text strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .summary-text .reset {
+    margin-left: 16px;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    background: none;
+    border: none;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    padding: 0;
+  }
+  .summary-text .reset.hidden { display: none; }
+
+  .sort-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .sort-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-right: 6px;
+  }
+
+  .sort-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 6px 10px;
+    border: 1px solid var(--rule-soft);
+    background: var(--paper);
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .sort-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* Verified toggle */
+  .verified-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 6px 12px;
+    border: 1px solid var(--rule-soft);
+    background: var(--paper);
+    user-select: none;
+  }
+  .verified-toggle:hover {
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  .verified-toggle.active {
+    background: var(--green);
+    color: var(--paper);
+    border-color: var(--green);
+  }
+  .verified-toggle input { display: none; }
+
+  /* Alpha nav */
+  .alpha-nav {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 49px;
+    background: var(--paper);
+    z-index: 50;
+  }
+
+  .alpha-letters {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+
+  .alpha {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    text-decoration: none;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    min-width: 24px;
+    text-align: center;
+  }
+  .alpha:hover {
+    color: var(--accent);
+    background: var(--paper-shade);
+  }
+  .alpha.disabled {
+    color: var(--rule-soft);
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* Var table */
+  .var-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--serif);
+  }
+
+  .var-table thead {
+    position: sticky;
+    top: 100px;
+    background: var(--paper);
+    z-index: 40;
+  }
+
+  .var-table thead th {
+    text-align: left;
+    padding: 12px 12px 12px 0;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+  }
+  .var-table thead th.num { text-align: right; }
+  .var-table thead th.no-sort { cursor: default; }
+  .var-table thead th:not(.no-sort):hover { color: var(--accent); }
+
+  .var-table thead th .sort-arrow {
+    margin-left: 4px;
+    opacity: 0.4;
+  }
+  .var-table thead th.sorted .sort-arrow {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  .alpha-marker {
+    background: var(--paper-shade);
+    border-top: 2px solid var(--rule);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .alpha-marker td {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 14px 12px 14px 0;
+    font-weight: 500;
+  }
+
+  .var-table tbody tr.entry {
+    border-bottom: 1px solid var(--rule-soft);
+    transition: background 0.12s ease;
+  }
+  .var-table tbody tr.entry:hover { background: var(--paper-shade); }
+  .var-table tbody tr.entry.checked { background: rgba(107, 24, 24, 0.04); }
+  .var-table tbody tr.entry:hover .var-name a { color: var(--accent); }
+
+  .var-table tbody td {
+    padding: 13px 12px 13px 0;
+    vertical-align: top;
+  }
+
+  .var-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .var-name {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .var-name a {
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .var-name .uk {
+    display: block;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 1px;
+    font-weight: 400;
+  }
+
+  .var-cat {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .num-cell {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .num-cell.empty { color: var(--rule-soft); }
+
+  .var-shape {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .var-color-mini {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .var-color-mini .swatch-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .var-arrow {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-muted);
+    text-align: right;
+  }
+  .var-table tbody tr.entry:hover .var-arrow { color: var(--accent); }
+
+  /* Compare cell + checkbox */
+  .compare-cell {
+    width: 32px;
+    padding-right: 8px !important;
+    vertical-align: middle !important;
+  }
+
+  .compare-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--rule-soft);
+    background: var(--paper);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.12s ease;
+    border-radius: 1px;
+  }
+  .compare-checkbox:hover { border-color: var(--ink); }
+  .compare-checkbox:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .compare-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -52%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: var(--mono);
+  }
+  .compare-checkbox:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Compare drawer */
+  .compare-drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ink);
+    color: var(--paper);
+    border-top: 2px solid var(--accent);
+    padding: 16px 0;
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+    z-index: 200;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.15);
+  }
+  .compare-drawer.visible { transform: translateY(0); }
+
+  .drawer-row {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .compare-drawer-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    flex-shrink: 0;
+    width: 148px;
+  }
+
+  .compare-chips {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .compare-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 6px 8px 6px 12px;
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--paper);
+  }
+  .compare-chip .chip-id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.1em;
+  }
+  .compare-chip .chip-remove {
+    width: 18px;
+    height: 18px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .compare-chip .chip-remove:hover { color: var(--paper); }
+
+  .compare-chip-empty {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .compare-actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .compare-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: transparent;
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .compare-btn:hover {
+    color: var(--paper);
+    border-color: var(--paper);
+  }
+  .compare-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--paper);
+  }
+  .compare-btn.primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+  .compare-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Compare modal */
+  .compare-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(24, 22, 20, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 300;
+    display: none;
+    padding: 40px 24px;
+  }
+  .compare-modal.visible {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+  }
+
+  .compare-modal-content {
+    background: var(--paper);
+    width: 100%;
+    max-width: 1400px;
+    border: 1px solid var(--rule);
+    margin-bottom: 40px;
+  }
+
+  .compare-modal-header {
+    padding: 32px 48px 24px;
+    border-bottom: 2px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .compare-modal-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 36px;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+  }
+  .compare-modal-title em { font-style: italic; }
+
+  .compare-modal-subtitle {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+
+  .compare-close {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--rule);
+    padding: 8px 14px;
+    cursor: pointer;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .compare-close:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .compare-table-wrap {
+    padding: 32px 48px 48px;
+    overflow-x: auto;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--serif);
+    table-layout: fixed;
+  }
+
+  .compare-table colgroup col:first-child { width: 200px; }
+  .compare-table th,
+  .compare-table td {
+    padding: 14px 18px 14px 0;
+    vertical-align: top;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .compare-table thead th {
+    text-align: left;
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 18px;
+  }
+  .compare-table thead th:first-child {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  .compare-modal-footer {
+    padding: 20px 48px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .compare-modal-footer button {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .compare-modal-footer button:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* Empty state */
+  .empty-state {
+    padding: 80px 24px;
+    text-align: center;
+    border: 1px dashed var(--rule-soft);
+    display: none;
+  }
+  .empty-state.visible { display: block; }
+  .empty-state .label-mono { padding-top: 0; margin-bottom: 12px; }
+  .empty-state h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .empty-state p {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 400px;
+    margin: 0 auto 16px;
+  }
+  .empty-state button {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .empty-state button:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    .search-grid,
+    .filter-panel-grid,
+    .alpha-nav-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .filter-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .summary-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .var-table thead { display: none; position: static; }
+    .var-table tbody tr.entry {
+      padding: 14px 0;
+      display: block;
+      border-bottom: 1px solid var(--rule-soft);
+      position: relative;
+      padding-left: 28px;
+    }
+    .var-table tbody td {
+      display: inline-block;
+      padding: 2px 8px 2px 0;
+      vertical-align: baseline;
+    }
+    .compare-cell {
+      position: absolute;
+      top: 14px;
+      left: 0;
+      padding: 0 !important;
+      width: auto;
+    }
+    .var-id { display: block; margin-bottom: 4px; }
+    .alpha-marker { display: block; padding: 12px 0; padding-left: 0 !important; }
+    .alpha-marker td { display: block; padding-left: 0; }
+    .alpha-nav { position: static; }
+
+    .drawer-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .compare-drawer-label { width: auto; }
+
+    .compare-modal { padding: 12px; }
+    .compare-modal-header {
+      padding: 20px 24px;
+      flex-direction: column;
+    }
+    .compare-table-wrap { padding: 16px 24px 32px; }
+    .compare-modal-footer {
+      padding: 16px 24px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

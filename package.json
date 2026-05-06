@@ -1,0 +1,22 @@
+{
+  "name": "seed-ua-tomato-library",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Library of heirloom tomato cultivars — Lazariev collection (Seed.ua)",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "import-data": "node scripts/import-from-excel.mjs"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.7",
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^4.16.0"
+  },
+  "devDependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,276 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  VARIETIES,
+  CATEGORY_LABEL,
+  CATEGORY_CODE,
+  CATEGORY_DESCRIPTION,
+  categorySchema,
+  breadcrumbSchema,
+} from '../../utils/varieties';
+
+export function getStaticPaths() {
+  return Object.keys(CATEGORY_CODE).map(catSlug => ({
+    params: { cat: catSlug },
+    props: { catSlug },
+  }));
+}
+
+const { catSlug } = Astro.props;
+const varieties = VARIETIES.filter(v => v.cat === catSlug)
+  .sort((a, b) => a.name_en.localeCompare(b.name_en));
+
+const catLabel = CATEGORY_LABEL[catSlug];
+const catCode = CATEGORY_CODE[catSlug];
+const catDescription = CATEGORY_DESCRIPTION[catSlug];
+
+const jsonLd = [
+  categorySchema(catSlug, varieties),
+  breadcrumbSchema([
+    { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
+    { name: 'Categories', url: 'https://library.en.seed.ua/categories/' },
+    { name: catLabel, url: `https://library.en.seed.ua/categories/${catSlug}/` },
+  ]),
+];
+---
+
+<BaseLayout
+  title={`${catLabel} cultivars`}
+  description={`${catDescription} — ${varieties.length} cultivars in the Lazariev heirloom collection.`}
+  jsonLd={jsonLd}
+>
+
+  <div class="container">
+    <nav class="breadcrumbs">
+      <a href="/">Catalogue</a>
+      <span>/</span>
+      <a href="/categories/">Categories</a>
+      <span>/</span>
+      {catLabel}
+    </nav>
+  </div>
+
+  <header class="cat-detail-header">
+    <div class="container">
+      <div class="cat-detail-id">{catCode} · {varieties.length} entries</div>
+      <h1 class="cat-detail-title">{catLabel} <em>cultivars</em></h1>
+      <p class="cat-detail-desc">{catDescription}</p>
+    </div>
+  </header>
+
+  <section class="cat-table-section">
+    <div class="container">
+      <table class="cat-table">
+        <thead>
+          <tr>
+            <th style="width: 90px;">ID</th>
+            <th>Cultivar</th>
+            <th class="num" style="width: 80px;">H, m</th>
+            <th class="num" style="width: 80px;">Wt, g</th>
+            <th style="width: 140px;">Form</th>
+            <th style="width: 90px;">Colour</th>
+            <th style="width: 30px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {varieties.map(v => {
+            const dominantColor = (v.colors && v.colors[0]) || 'unspecified';
+            return (
+              <tr>
+                <td class="cat-id">{v.id}</td>
+                <td class="cat-cultivar">
+                  <a href={`/varieties/${v.slug}/`}>
+                    {v.name_en}
+                    {v.has_canonical_en && <span class="verified-badge">✓</span>}
+                  </a>
+                  <span class="cat-uk">{v.name_uk}</span>
+                </td>
+                <td class={`num-cell ${v.h == null ? 'empty' : ''}`}>{v.h ?? '—'}</td>
+                <td class={`num-cell ${v.w == null ? 'empty' : ''}`}>{v.w ?? '—'}</td>
+                <td class="cat-shape">{v.shape || '—'}</td>
+                <td>
+                  <div class="var-color-mini">
+                    {(v.colors || []).slice(0, 2).map(c => (
+                      <span class={`swatch-dot dot-${c}`} title={c}></span>
+                    ))}
+                  </div>
+                </td>
+                <td class="cat-arrow"><a href={`/varieties/${v.slug}/`}>→</a></td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="cat-related-section">
+    <div class="container">
+      <div class="cat-related-label">Browse other categories</div>
+      <div class="cat-related-links">
+        {Object.keys(CATEGORY_CODE).filter(c => c !== catSlug).map(c => (
+          <a href={`/categories/${c}/`} class="cat-related-link">
+            {CATEGORY_LABEL[c]}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .cat-detail-header {
+    padding: 56px 0 40px;
+    border-bottom: 2px solid var(--rule);
+  }
+  .cat-detail-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .cat-detail-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(48px, 6vw, 78px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .cat-detail-title em { font-style: italic; }
+  .cat-detail-desc {
+    font-family: var(--serif);
+    font-size: 19px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 720px;
+  }
+
+  .cat-table-section { padding: 48px 0 64px; }
+
+  .cat-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--serif);
+  }
+
+  .cat-table thead th {
+    text-align: left;
+    padding: 12px 12px 12px 0;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .cat-table thead th.num { text-align: right; }
+
+  .cat-table tbody tr {
+    border-bottom: 1px solid var(--rule-soft);
+    transition: background 0.12s ease;
+  }
+  .cat-table tbody tr:hover { background: var(--paper-shade); }
+
+  .cat-table tbody td {
+    padding: 14px 12px 14px 0;
+    vertical-align: top;
+  }
+
+  .cat-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .cat-cultivar a {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .cat-cultivar a:hover { color: var(--accent); }
+
+  .cat-uk {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 1px;
+  }
+
+  .num-cell {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: right;
+  }
+  .num-cell.empty { color: var(--rule-soft); }
+
+  .cat-shape {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .var-color-mini {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .var-color-mini .swatch-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .cat-arrow a {
+    text-decoration: none;
+    color: var(--ink-muted);
+    font-family: var(--mono);
+  }
+  .cat-arrow a:hover { color: var(--accent); }
+
+  .cat-related-section {
+    padding: 48px 0 80px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .cat-related-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .cat-related-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .cat-related-link {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 8px 14px;
+    border: 1px solid var(--rule-soft);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .cat-related-link:hover {
+    color: var(--paper);
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+</style>

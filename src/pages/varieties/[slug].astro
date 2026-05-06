@@ -1,0 +1,510 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  VARIETIES,
+  getFullVarietyByName,
+  getRelatedVarieties,
+  varietySchema,
+  breadcrumbSchema,
+  CATEGORY_LABEL,
+  habitLabel,
+  sizeClassLabel,
+} from '../../utils/varieties';
+
+export function getStaticPaths() {
+  return VARIETIES.map(variety => ({
+    params: { slug: variety.slug },
+    props: { variety },
+  }));
+}
+
+const { variety } = Astro.props;
+const full = getFullVarietyByName(variety.name_uk);
+const related = getRelatedVarieties(variety, 4);
+
+const dominantColor = (variety.colors && variety.colors[0]) || 'unspecified';
+
+const jsonLd = [
+  varietySchema(variety, full),
+  breadcrumbSchema([
+    { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
+    { name: 'Varieties', url: 'https://library.en.seed.ua/varieties/' },
+    { name: variety.name_en, url: `https://library.en.seed.ua/varieties/${variety.slug}/` },
+  ]),
+];
+
+const description = full?.description || variety.note || `${variety.name_en} (${variety.name_uk}) — ${variety.cat_label} tomato cultivar from the Lazariev heirloom collection.`;
+---
+
+<BaseLayout
+  title={`${variety.name_en} — ${variety.cat_label}`}
+  description={description}
+  jsonLd={jsonLd}
+>
+
+  <div class="container">
+    <nav class="breadcrumbs">
+      <a href="/">Catalogue</a>
+      <span>/</span>
+      <a href="/varieties/">Index</a>
+      <span>/</span>
+      <a href={`/categories/${variety.cat}/`}>{variety.cat_label}</a>
+      <span>/</span>
+      {variety.name_en}
+    </nav>
+  </div>
+
+  <article class="variety-detail">
+    <header class="var-header">
+      <div class="container">
+        <div class="var-header-meta">
+          <span class="var-cat-id">{variety.id}</span>
+          <span class="var-sep">·</span>
+          <span class="var-cat-label">{variety.cat_label}</span>
+          {variety.has_canonical_en && (
+            <>
+              <span class="var-sep">·</span>
+              <span class="verified-label">✓ Canonical name verified</span>
+            </>
+          )}
+        </div>
+
+        <h1 class="var-title">
+          <span class="title-en">{variety.name_en}</span>
+        </h1>
+
+        <div class="var-uk-name">{variety.name_uk}</div>
+
+        {description && (
+          <p class="var-tagline">{description.split('.')[0]}.</p>
+        )}
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="var-body">
+
+        <!-- Plate visual -->
+        <aside class="var-plate">
+          <div class={`plate-image plate-${dominantColor}`}>
+            <div class="plate-label">PLATE {variety.id}</div>
+          </div>
+          <div class="plate-caption">
+            <em>{variety.name_en}</em>
+            {variety.colors.length > 0 && ` · ${variety.colors.join(', ')}`}
+            {variety.shape && ` · ${variety.shape}`}
+          </div>
+        </aside>
+
+        <!-- Morphological description -->
+        <section class="var-content">
+          <div class="content-section">
+            <h2 class="section-title">Morphological description</h2>
+
+            <table class="morph-table">
+              <tbody>
+                <tr>
+                  <th>Plant height</th>
+                  <td>{variety.h != null ? `${variety.h} m` : '—'}</td>
+                </tr>
+                <tr>
+                  <th>Plant habit</th>
+                  <td>{habitLabel(variety.h) || '—'}</td>
+                </tr>
+                {full?.habit && (
+                  <tr>
+                    <th>Growth type</th>
+                    <td>{full.habit}</td>
+                  </tr>
+                )}
+                <tr>
+                  <th>Average fruit weight</th>
+                  <td>{variety.w != null ? `${variety.w} g` : '—'}</td>
+                </tr>
+                <tr>
+                  <th>Size class</th>
+                  <td>{sizeClassLabel(variety.w) || '—'}</td>
+                </tr>
+                <tr>
+                  <th>Fruit form</th>
+                  <td>{variety.shape || '—'}</td>
+                </tr>
+                <tr>
+                  <th>Fruit colour</th>
+                  <td>
+                    {variety.colors.length > 0 ? (
+                      <span class="color-cell">
+                        {variety.colors.map(c => (
+                          <span class={`swatch-dot dot-${c}`}></span>
+                        ))}
+                        <span style="margin-left: 8px;">{variety.colors.join(', ')}</span>
+                      </span>
+                    ) : '—'}
+                  </td>
+                </tr>
+                {full?.leaf_type && (
+                  <tr>
+                    <th>Leaf type</th>
+                    <td>{full.leaf_type}</td>
+                  </tr>
+                )}
+                {full?.days_to_maturity && (
+                  <tr>
+                    <th>Days to maturity</th>
+                    <td>{full.days_to_maturity} days from transplant</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {full?.description && (
+            <div class="content-section">
+              <h2 class="section-title">Description</h2>
+              <p class="var-description">{full.description}</p>
+            </div>
+          )}
+
+          {full?._recovered_from && (
+            <div class="content-section">
+              <h2 class="section-title">Cataloguing note</h2>
+              <p class="cataloguing-note">
+                The full name of this cultivar was recovered from the original Ukrainian source material
+                (catalog edition 2026.01) where the entry was previously listed in abbreviated form as
+                <em>"{full._recovered_from}"</em>.
+              </p>
+            </div>
+          )}
+
+          <div class="content-section cta-section">
+            <h2 class="section-title">Order seeds</h2>
+            <p class="cta-text">
+              Seeds for <em>{variety.name_en}</em> are available from Seed.ua, the Lazariev family seed company in Ukraine.
+              Worldwide shipping via Ukrposhta.
+            </p>
+            <a href={`https://en.seed.ua/products/${variety.slug}`} class="cta-link" target="_blank" rel="noopener">
+              View on en.seed.ua →
+            </a>
+          </div>
+
+        </section>
+      </div>
+    </div>
+
+    {related.length > 0 && (
+      <section class="related-section">
+        <div class="container">
+          <h2 class="related-title">Related cultivars in the {variety.cat_label.toLowerCase()} category</h2>
+          <div class="related-grid">
+            {related.map(r => (
+              <a href={`/varieties/${r.slug}/`} class="related-card">
+                <div class="related-id">{r.id}</div>
+                <div class="related-name">
+                  {r.name_en}
+                  {r.has_canonical_en && <span class="verified-badge">✓</span>}
+                </div>
+                <div class="related-uk">{r.name_uk}</div>
+                <div class="related-meta">
+                  {r.h != null && `${r.h} m`}
+                  {r.h != null && r.w != null && ' · '}
+                  {r.w != null && `${r.w} g`}
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+  </article>
+
+</BaseLayout>
+
+<style>
+  .var-header {
+    padding: 56px 0 40px;
+    border-bottom: 2px solid var(--rule);
+  }
+
+  .var-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .var-cat-id { color: var(--accent); }
+  .var-sep { color: var(--rule-soft); }
+  .verified-label { color: var(--green); font-weight: 500; }
+
+  .var-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(48px, 7vw, 88px);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+  }
+
+  .var-uk-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 28px;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .var-tagline {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--ink);
+    max-width: 720px;
+    line-height: 1.5;
+  }
+
+  .var-body {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 80px;
+    padding: 64px 0;
+  }
+
+  /* Plate */
+  .var-plate {
+    position: sticky;
+    top: 72px;
+    height: fit-content;
+  }
+
+  .plate-image {
+    aspect-ratio: 4/5;
+    border: 1px solid var(--rule);
+    position: relative;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  }
+  .plate-red { background: var(--color-red); }
+  .plate-pink { background: var(--color-pink); }
+  .plate-yellow { background: var(--color-yellow); }
+  .plate-orange { background: var(--color-orange); }
+  .plate-black { background: var(--color-black); }
+  .plate-bicolor { background: var(--color-bicolor); }
+  .plate-chocolate { background: var(--color-chocolate); }
+  .plate-purple { background: var(--color-purple); }
+  .plate-green { background: var(--color-green); }
+  .plate-white { background: var(--color-white); }
+  .plate-unspecified { background: var(--color-unspecified); }
+
+  .plate-label {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink);
+    background: var(--paper);
+    padding: 4px 8px;
+    border: 1px solid var(--rule);
+  }
+
+  .plate-caption {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    text-align: center;
+  }
+  .plate-caption em { font-style: normal; font-weight: 500; color: var(--ink); }
+
+  /* Content */
+  .content-section {
+    margin-bottom: 56px;
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .morph-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--serif);
+  }
+
+  .morph-table th,
+  .morph-table td {
+    text-align: left;
+    padding: 14px 16px 14px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+  }
+
+  .morph-table th {
+    width: 220px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 500;
+    padding-right: 32px;
+  }
+
+  .morph-table td {
+    font-size: 18px;
+    color: var(--ink);
+  }
+
+  .color-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .var-description {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--ink);
+    max-width: 720px;
+  }
+
+  .cataloguing-note {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    padding: 16px 20px;
+    border-left: 2px solid var(--accent);
+    background: var(--paper-shade);
+  }
+
+  .cta-section {
+    background: var(--paper-shade);
+    padding: 32px;
+    margin-top: 64px;
+  }
+
+  .cta-text {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--ink);
+    margin-bottom: 20px;
+    line-height: 1.55;
+  }
+  .cta-text em { font-style: italic; font-weight: 500; }
+
+  .cta-link {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 24px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  .cta-link:hover {
+    background: var(--accent);
+    color: var(--paper);
+  }
+
+  /* Related */
+  .related-section {
+    border-top: 2px solid var(--rule);
+    padding: 56px 0 80px;
+  }
+
+  .related-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-style: italic;
+    font-size: 28px;
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+  }
+
+  .related-card {
+    display: block;
+    padding: 24px 20px;
+    border: 1px solid var(--rule-soft);
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--paper);
+    transition: all 0.15s ease;
+  }
+  .related-card:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  .related-id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .related-name {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+
+  .related-uk {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+
+  .related-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    .var-body {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 32px 0;
+    }
+    .var-plate { position: static; max-width: 320px; margin: 0 auto; }
+    .morph-table th { width: 50%; padding-right: 16px; }
+    .var-title { font-size: 40px; }
+    .var-uk-name { font-size: 22px; }
+  }
+</style>

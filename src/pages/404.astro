@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found · 404" description="The page you requested could not be found in this catalogue.">
+  <section class="error-section">
+    <div class="container">
+      <div class="error-id">Error 404</div>
+      <h1 class="error-title">This <em>cultivar</em> could not be found.</h1>
+      <p class="error-text">
+        The page you requested does not exist in this edition of the catalogue.
+        It may have been moved, renamed, or never existed.
+      </p>
+      <div class="error-actions">
+        <a href="/" class="error-link">← Return to title page</a>
+        <a href="/varieties/" class="error-link">Browse master index →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .error-section {
+    padding: 120px 0;
+    border-bottom: 2px solid var(--rule);
+  }
+  .error-id {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .error-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(48px, 6vw, 78px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .error-title em { font-style: italic; }
+  .error-text {
+    font-family: var(--serif);
+    font-size: 19px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 540px;
+    margin-bottom: 40px;
+  }
+  .error-actions {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .error-link {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--accent);
+  }
+  .error-link:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+</style>
