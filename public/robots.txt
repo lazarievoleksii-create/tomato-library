@@ -33,4 +33,8 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
+# AI-friendly resources
+# - /llms.txt — structured catalogue map for LLMs (llmstxt.org spec)
+# - /llms-full.txt — complete catalogue as Markdown (all 331 cultivars in one file)
+
 Sitemap: https://library.en.seed.ua/sitemap-index.xml
