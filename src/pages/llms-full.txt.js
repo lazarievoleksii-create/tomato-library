@@ -7,9 +7,14 @@ import {
   CATEGORY_LABEL,
   CATEGORY_CODE,
   CATEGORY_DESCRIPTION,
+  CATALOGUE_EDITION,
+  CATALOGUE_MODIFIED_DATE,
+  PUBLISHER,
 } from '../utils/varieties';
 
 const SITE = 'https://library.en.seed.ua';
+
+export const prerender = true;
 
 function habitFor(h) {
   if (h == null) return null;
@@ -51,7 +56,7 @@ function fullEntryFor(variety) {
 export async function GET() {
   const verifiedCount = VARIETIES.filter((variety) => variety.has_canonical_en).length;
   const totalCount = VARIETIES.length;
-  const today = new Date().toISOString().split('T')[0];
+  const today = CATALOGUE_MODIFIED_DATE;
 
   const byCat = {};
   VARIETIES.forEach((variety) => {
@@ -63,9 +68,10 @@ export async function GET() {
 
 > Complete catalogue of ${totalCount} open-pollinated heirloom tomato cultivars from the Lazariev family seed collection in Ukraine.
 
-Published by Seed.ua. Volume I, Edition 2026.01.
+Published by ${PUBLISHER.name}. Volume I, Edition ${CATALOGUE_EDITION}.
 Last updated: ${today}.
 Source URL: ${SITE}/
+Structured JSON index: ${SITE}/llms.json
 
 This document contains the complete catalogue with all cultivars, organized by category. Each entry includes English and Ukrainian names, morphological data (plant height, fruit weight, fruit form, colour), descriptive notes, catalogue attributes, and a link to the canonical web page.
 
@@ -146,13 +152,17 @@ Of ${totalCount} cultivars, ${verifiedCount} have HIGH-confidence canonical Engl
 
 This catalogue is published by **Seed.ua** (Lazariev family seed company, Ukraine, established 1991).
 
+**Edition:** ${CATALOGUE_EDITION}
+
+**Last updated:** ${CATALOGUE_MODIFIED_DATE}
+
 **Citation:**
-Lazariev, O., Lazarieva, O. (2026). *Catalogue of Solanum lycopersicum: Lazariev Heirloom Tomato Library, Volume I, Edition 2026.01.* Seed.ua, Ukraine. Retrieved from ${SITE}/
+Lazariev, O., Lazarieva, O. (2026). *Catalogue of Solanum lycopersicum: Lazariev Heirloom Tomato Library, Volume I, Edition ${CATALOGUE_EDITION}.* Seed.ua, Ukraine. Retrieved from ${SITE}/
 
 **Contact:**
-- Catalogue editorial: elena@lazareva.info
-- International seed orders: https://en.seed.ua
-- Ukrainian seed orders: https://seed.ua
+- Catalogue editorial: ${PUBLISHER.email}
+- International seed orders: ${PUBLISHER.internationalUrl}
+- Ukrainian seed orders: ${PUBLISHER.url}
 
 **Reference databases consulted:**
 - Tatiana TOMATObase (tatianastomatobase.com) — primary reference for canonical English names

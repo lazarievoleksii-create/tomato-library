@@ -1,14 +1,21 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { VARIETIES, breadcrumbSchema } from '../../utils/varieties';
+import { VARIETIES, breadcrumbSchema, webPageSchema } from '../../utils/varieties';
 
 const totalCount = VARIETIES.length;
 const verifiedCount = VARIETIES.filter(v => v.has_canonical_en).length;
 
 // Sort by English name for default A-Z
 const sorted = [...VARIETIES].sort((a, b) => a.name_en.localeCompare(b.name_en));
+const description = `Complete A-Z index of ${totalCount} open-pollinated tomato cultivars in the Lazariev collection. Searchable, filterable, with side-by-side comparison.`;
 
 const jsonLd = [
+  webPageSchema({
+    path: '/varieties/',
+    name: 'Index of Cultivars',
+    description,
+    type: 'CollectionPage',
+  }),
   breadcrumbSchema([
     { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
     { name: 'Index of Cultivars', url: 'https://library.en.seed.ua/varieties/' },
@@ -29,7 +36,7 @@ const jsonLd = [
 
 <BaseLayout
   title="Index of Cultivars"
-  description={`Complete A–Z index of ${totalCount} open-pollinated tomato cultivars in the Lazariev collection. Searchable, filterable, with side-by-side comparison.`}
+  description={description}
   jsonLd={jsonLd}
 >
 

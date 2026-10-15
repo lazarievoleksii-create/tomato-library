@@ -158,14 +158,21 @@ and AI agents (ChatGPT, Claude, Perplexity, Google AI Overviews):
     morphological data)
   - `BreadcrumbList` schema
   - `CollectionPage` schema for categories
-  - `Book` schema on the homepage
+  - `Book` and `Dataset` schema on the homepage
+  - `Organization`, `WebSite`, `WebPage`, and visible `FAQPage` schema where applicable
 - **Sitemap** auto-generated at `/sitemap-index.xml` via `@astrojs/sitemap`
 - **RSS feed** at `/rss.xml`
+- **Structured AI index** at `/llms.json`
+- **Human-readable provenance file** at `/humans.txt`
 - **AI-agent allowlist** in `robots.txt` (GPTBot, ClaudeBot, anthropic-ai,
   PerplexityBot, Google-Extended, etc.)
 - **Canonical URLs**, OG tags, Twitter cards on every page
 - **Trailing-slash URLs** (configured in `astro.config.mjs`) for stable
   GitHub Pages routing
+- **SEO/GEO audit workflow** via `npm run seo:audit`
+
+See `docs/seo-geo-playbook.md` and `AGENTS.md` for the local SEO/GEO operating
+rules adapted from the public `seo-geo-claude-skills` workflows.
 
 ## Design system
 
@@ -188,6 +195,7 @@ npm run dev          # Start dev server at http://localhost:4321
 npm run build        # Build static site to dist/
 npm run preview      # Preview the build locally
 npm run import-data  # Regenerate JSON from src/data/source-catalog.xlsx
+npm run seo:audit    # Build and run SEO/GEO checks
 ```
 
 ## License & citation

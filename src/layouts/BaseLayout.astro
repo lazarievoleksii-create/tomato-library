@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { CATALOGUE_EDITION, PUBLISHER, VARIETIES, publisherSchema, websiteSchema } from '../utils/varieties';
 
 export interface Props {
   title: string;
@@ -11,17 +12,30 @@ export interface Props {
 
 const {
   title,
-  description = 'A scientific catalogue of 331 open-pollinated heirloom tomato cultivars from the Lazariev collection — Eastern European genetics curated since 1991.',
+  description = `A scientific catalogue of ${VARIETIES.length} open-pollinated heirloom tomato cultivars from the Lazariev collection — Eastern European genetics curated since 1991.`,
   ogImage = '/og-default.png',
   jsonLd,
   bodyClass = '',
 } = Astro.props;
 
 const fullTitle = title.includes('Catalogue') ? title : `${title} · Catalogue of Solanum lycopersicum`;
+const descriptionText = description.replace(/\s+/g, ' ').trim();
+const completeDescription = descriptionText.length < 45
+  ? `${descriptionText} Measurements and growing notes from the Lazariev tomato catalogue.`
+  : descriptionText;
+const metaDescription = completeDescription.length > 165
+  ? `${completeDescription.slice(0, 162).replace(/\s+\S*$/, '')}…`
+  : completeDescription;
+const isNotFound = /^\/404\/?$/.test(Astro.url.pathname);
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const ogImageUrl = new URL(ogImage, Astro.site).toString();
 
-const jsonLdArray = Array.isArray(jsonLd) ? jsonLd : (jsonLd ? [jsonLd] : []);
+const pageJsonLd = Array.isArray(jsonLd) ? jsonLd : (jsonLd ? [jsonLd] : []);
+const jsonLdArray = [
+  publisherSchema(),
+  websiteSchema(),
+  ...pageJsonLd,
+];
 ---
 
 <!DOCTYPE html>
@@ -32,14 +46,21 @@ const jsonLdArray = Array.isArray(jsonLd) ? jsonLd : (jsonLd ? [jsonLd] : []);
   <meta name="generator" content={Astro.generator} />
 
   <title>{fullTitle}</title>
-  <meta name="description" content={description} />
+  <meta name="description" content={metaDescription} />
+  <meta name="robots" content={isNotFound ? 'noindex,follow' : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'} />
+  <meta name="author" content={PUBLISHER.name} />
+  <meta name="publisher" content={PUBLISHER.name} />
+  <meta name="application-name" content="Lazariev Heirloom Tomato Library" />
+  <meta name="theme-color" content="#fafaf7" />
+  <meta name="color-scheme" content="light" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="canonical" href={canonical} />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content={fullTitle} />
-  <meta property="og:description" content={description} />
+  <meta property="og:description" content={metaDescription} />
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={ogImageUrl} />
   <meta property="og:site_name" content="Catalogue of Solanum lycopersicum" />
@@ -48,11 +69,13 @@ const jsonLdArray = Array.isArray(jsonLd) ? jsonLd : (jsonLd ? [jsonLd] : []);
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={fullTitle} />
-  <meta name="twitter:description" content={description} />
+  <meta name="twitter:description" content={metaDescription} />
   <meta name="twitter:image" content={ogImageUrl} />
 
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="Catalogue updates" href="/rss.xml" />
+  <link rel="alternate" type="text/plain" title="LLMs index" href="/llms.txt" />
+  <link rel="alternate" type="application/json" title="Structured AI index" href="/llms.json" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -71,7 +94,7 @@ const jsonLdArray = Array.isArray(jsonLd) ? jsonLd : (jsonLd ? [jsonLd] : []);
         <div class="left">
           <a href="/">Seed.ua</a>
           <span class="vol-no">Vol. I</span>
-          <span class="hide-mobile">Ed. 2026.01</span>
+          <span class="hide-mobile">Ed. {CATALOGUE_EDITION}</span>
         </div>
         <nav class="right">
           <a href="/categories/">Categories</a>
@@ -90,9 +113,11 @@ const jsonLdArray = Array.isArray(jsonLd) ? jsonLd : (jsonLd ? [jsonLd] : []);
   <footer class="footer-bar">
     <div class="container">
       <div class="footer-bar-row">
-        <span>© 2026 Seed.ua · Catalogue of Solanum lycopersicum · 331 cultivars</span>
+        <span>© 2026 Seed.ua · Ed. {CATALOGUE_EDITION} · {VARIETIES.length} cultivars</span>
         <div class="right">
           <a href="/sitemap-index.xml">Sitemap</a>
+          <a href="/llms.txt">LLMs</a>
+          <a href="/llms.json">AI JSON</a>
           <a href="/rss.xml">RSS</a>
           <a href="/about/">About</a>
         </div>

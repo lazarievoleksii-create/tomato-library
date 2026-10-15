@@ -1,6 +1,21 @@
 import varieties from '../data/varieties.json';
 import varietiesFull from '../data/varieties-full.json';
 
+export const SITE_URL = 'https://library.en.seed.ua';
+export const SITE_NAME = 'Catalogue of Solanum lycopersicum';
+export const SITE_ALTERNATE_NAME = 'Lazariev Heirloom Tomato Library';
+export const CATALOGUE_EDITION = '2026.01';
+export const CATALOGUE_PUBLICATION_DATE = '2026-01-15';
+export const CATALOGUE_MODIFIED_DATE = '2026-06-12';
+
+export const PUBLISHER = {
+  name: 'Seed.ua',
+  url: 'https://seed.ua',
+  internationalUrl: 'https://en.seed.ua',
+  foundingDate: '1991',
+  email: 'elena@lazareva.info',
+};
+
 export interface Variety {
   id: string;
   slug: string;
@@ -37,6 +52,10 @@ export interface VarietyFull {
 
 export const VARIETIES: Variety[] = varieties as Variety[];
 export const VARIETIES_FULL: VarietyFull[] = varietiesFull as VarietyFull[];
+
+export function absoluteUrl(path = '/'): string {
+  return new URL(path, SITE_URL).toString();
+}
 
 export const CATEGORY_LABEL: Record<string, string> = {
   collectible: 'Collectible',
@@ -102,6 +121,15 @@ export function getFullVarietyByName(name: string): VarietyFull | undefined {
   return VARIETIES_FULL.find(v => v.name === name);
 }
 
+export function getFullVariety(variety: Variety): VarietyFull | undefined {
+  return VARIETIES_FULL.find(v =>
+    v.name === variety.name_uk ||
+    v.name === variety.name_en ||
+    v.name_en === variety.name_en ||
+    v.slug === variety.slug
+  );
+}
+
 export function getVarietiesByCategory(cat: string): Variety[] {
   return VARIETIES.filter(v => v.cat === cat);
 }
@@ -140,6 +168,217 @@ export function habitLabel(h: number | null): string {
   return 'Tall (> 1.2 m)';
 }
 
+export function compactDescription(text: string, maxLength = 160): string {
+  const normalized = String(text || '').replace(/\s+/g, ' ').trim();
+  if (normalized.length <= maxLength) return normalized;
+
+  const truncated = normalized.slice(0, maxLength - 1).replace(/\s+\S*$/, '');
+  return `${truncated}…`;
+}
+
+export function publisherSchema(): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${PUBLISHER.url}/#organization`,
+    name: PUBLISHER.name,
+    alternateName: ['Seed UA', 'Lazariev family seed company'],
+    url: PUBLISHER.url,
+    sameAs: [
+      PUBLISHER.internationalUrl,
+      SITE_URL,
+    ],
+    foundingDate: PUBLISHER.foundingDate,
+    email: PUBLISHER.email,
+    areaServed: ['Ukraine', 'Europe', 'Worldwide'],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'catalogue editorial',
+      email: PUBLISHER.email,
+      availableLanguage: ['en', 'uk', 'ru'],
+    },
+  };
+}
+
+export function websiteSchema(): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+    name: SITE_NAME,
+    alternateName: SITE_ALTERNATE_NAME,
+    url: `${SITE_URL}/`,
+    inLanguage: 'en',
+    publisher: {
+      '@id': `${PUBLISHER.url}/#organization`,
+    },
+    about: {
+      '@type': 'Thing',
+      name: 'Solanum lycopersicum',
+      alternateName: 'tomato',
+    },
+  };
+}
+
+export function datasetSchema(): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    '@id': `${SITE_URL}/#dataset`,
+    name: `${SITE_NAME}: ${SITE_ALTERNATE_NAME}, Volume I`,
+    alternateName: SITE_ALTERNATE_NAME,
+    description: `Structured catalogue of ${VARIETIES.length} open-pollinated heirloom tomato cultivars from the Lazariev family seed collection in Ukraine.`,
+    url: `${SITE_URL}/`,
+    version: CATALOGUE_EDITION,
+    inLanguage: 'en',
+    datePublished: CATALOGUE_PUBLICATION_DATE,
+    dateModified: CATALOGUE_MODIFIED_DATE,
+    isAccessibleForFree: true,
+    creator: {
+      '@id': `${PUBLISHER.url}/#organization`,
+    },
+    publisher: {
+      '@id': `${PUBLISHER.url}/#organization`,
+    },
+    keywords: [
+      'Solanum lycopersicum',
+      'heirloom tomatoes',
+      'open-pollinated tomato cultivars',
+      'Ukrainian seed collection',
+      'Eastern European tomato varieties',
+      'Lazariev collection',
+    ],
+    variableMeasured: [
+      'cultivar name',
+      'plant height',
+      'fruit weight',
+      'fruit form',
+      'fruit colour',
+      'growth habit',
+      'days to maturity',
+      'canonical English name verification',
+    ],
+    measurementTechnique: 'Manual cultivar observations and editorial cross-reference against heirloom tomato databases.',
+    distribution: [
+      {
+        '@type': 'DataDownload',
+        name: 'Complete catalogue for LLM ingestion',
+        contentUrl: `${SITE_URL}/llms-full.txt`,
+        encodingFormat: 'text/plain',
+      },
+      {
+        '@type': 'DataDownload',
+        name: 'Structured catalogue JSON for AI agents',
+        contentUrl: `${SITE_URL}/llms.json`,
+        encodingFormat: 'application/json',
+      },
+      {
+        '@type': 'DataDownload',
+        name: 'RSS feed',
+        contentUrl: `${SITE_URL}/rss.xml`,
+        encodingFormat: 'application/rss+xml',
+      },
+    ],
+  };
+}
+
+export function webPageSchema({
+  path,
+  name,
+  description,
+  type = 'WebPage',
+  mainEntity,
+}: {
+  path: string;
+  name: string;
+  description: string;
+  type?: string;
+  mainEntity?: object;
+}): object {
+  const url = absoluteUrl(path);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': type,
+    '@id': `${url}#webpage`,
+    url,
+    name,
+    description,
+    inLanguage: 'en',
+    isPartOf: {
+      '@id': `${SITE_URL}/#website`,
+    },
+    publisher: {
+      '@id': `${PUBLISHER.url}/#organization`,
+    },
+    datePublished: CATALOGUE_PUBLICATION_DATE,
+    dateModified: CATALOGUE_MODIFIED_DATE,
+    ...(mainEntity ? { mainEntity } : {}),
+  };
+}
+
+export function faqSchema(items: Array<{ question: string; answer: string }>): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map(item => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+}
+
+export function varietyFaq(variety: Variety, full?: VarietyFull): Array<{ question: string; answer: string }> {
+  const color = variety.colors.length > 0 ? variety.colors.join(', ') : 'not yet specified';
+  const height = variety.h != null ? `${variety.h} m` : 'not yet recorded in the public catalogue';
+  const weight = variety.w != null ? `${variety.w} g` : 'not yet recorded in the public catalogue';
+  const form = variety.shape || 'not yet specified';
+  const maturity = full?.days_to_maturity ? `${full.days_to_maturity} days from transplant` : 'not yet recorded in the public catalogue';
+
+  return [
+    {
+      question: `What is ${variety.name_en}?`,
+      answer: `${variety.name_en} is a ${variety.cat_label.toLowerCase()} tomato cultivar documented in the Lazariev Heirloom Tomato Library, a Seed.ua catalogue of open-pollinated tomato cultivars from Ukraine.`,
+    },
+    {
+      question: `What are the recorded fruit traits for ${variety.name_en}?`,
+      answer: `${variety.name_en} is recorded with ${color} fruit, ${form} fruit form, and an average fruit weight of ${weight}.`,
+    },
+    {
+      question: `How tall does ${variety.name_en} grow?`,
+      answer: `The public catalogue records ${variety.name_en} plant height as ${height}. Its maturity timing is ${maturity}.`,
+    },
+    {
+      question: `Where can ${variety.name_en} seeds be ordered?`,
+      answer: `Seed links for ${variety.name_en} point to the international Seed.ua shop at https://en.seed.ua/products/${variety.slug}. Availability should be confirmed on the shop page before ordering.`,
+    },
+  ];
+}
+
+export function categoryFaq(cat: string, count: number): Array<{ question: string; answer: string }> {
+  const label = CATEGORY_LABEL[cat];
+  const description = CATEGORY_DESCRIPTION[cat];
+
+  return [
+    {
+      question: `What are ${label.toLowerCase()} tomato cultivars?`,
+      answer: `${label} tomato cultivars in this catalogue are grouped by their dominant morphological or collection trait. ${description}`,
+    },
+    {
+      question: `How many ${label.toLowerCase()} cultivars are listed?`,
+      answer: `The Lazariev Heirloom Tomato Library currently lists ${count} ${label.toLowerCase()} cultivars in Volume I, Edition ${CATALOGUE_EDITION}.`,
+    },
+    {
+      question: `How should this category be used?`,
+      answer: `Use this category page to compare cultivar names, plant height, fruit weight, fruit form, colour, and links to the canonical detail pages before choosing varieties for a garden or collection.`,
+    },
+  ];
+}
+
 /**
  * Generate JSON-LD Product schema for a variety.
  */
@@ -150,13 +389,27 @@ export function varietySchema(v: Variety, full?: VarietyFull): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    '@id': `https://library.en.seed.ua/varieties/${v.slug}/`,
+    '@id': `${SITE_URL}/varieties/${v.slug}/#cultivar`,
     name: v.name_en,
     alternateName: altNames,
     description: full?.description || v.note,
+    url: `${SITE_URL}/varieties/${v.slug}/`,
     category: v.cat_label,
     additionalType: 'https://schema.org/Plant',
+    brand: {
+      '@id': `${PUBLISHER.url}/#organization`,
+    },
+    manufacturer: {
+      '@id': `${PUBLISHER.url}/#organization`,
+    },
     productID: v.id,
+    identifier: v.id,
+    isPartOf: {
+      '@id': `${SITE_URL}/#dataset`,
+    },
+    mainEntityOfPage: {
+      '@id': `${SITE_URL}/varieties/${v.slug}/#webpage`,
+    },
     additionalProperty: [
       v.h != null && {
         '@type': 'PropertyValue',
@@ -214,13 +467,15 @@ export function categorySchema(cat: string, varieties: Variety[]): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `https://library.en.seed.ua/categories/${cat}/`,
+    '@id': `${SITE_URL}/categories/${cat}/#collection`,
+    url: `${SITE_URL}/categories/${cat}/`,
     name: `${CATEGORY_LABEL[cat]} tomato cultivars`,
     description: CATEGORY_DESCRIPTION[cat],
     isPartOf: {
-      '@type': 'WebSite',
-      name: 'Catalogue of Solanum lycopersicum',
-      url: 'https://library.en.seed.ua/',
+      '@id': `${SITE_URL}/#website`,
+    },
+    publisher: {
+      '@id': `${PUBLISHER.url}/#organization`,
     },
     mainEntity: {
       '@type': 'ItemList',
@@ -231,7 +486,7 @@ export function categorySchema(cat: string, varieties: Variety[]): object {
         item: {
           '@type': 'Product',
           name: v.name_en,
-          url: `https://library.en.seed.ua/varieties/${v.slug}/`,
+          url: `${SITE_URL}/varieties/${v.slug}/`,
         },
       })),
     },

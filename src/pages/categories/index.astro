@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { VARIETIES, CATEGORY_LABEL, CATEGORY_CODE, CATEGORY_DESCRIPTION, breadcrumbSchema } from '../../utils/varieties';
+import { VARIETIES, CATEGORY_LABEL, CATEGORY_CODE, CATEGORY_DESCRIPTION, breadcrumbSchema, webPageSchema } from '../../utils/varieties';
 
 const categories = Object.keys(CATEGORY_CODE).map(catSlug => ({
   slug: catSlug,
@@ -10,15 +10,25 @@ const categories = Object.keys(CATEGORY_CODE).map(catSlug => ({
   count: VARIETIES.filter(v => v.cat === catSlug).length,
 }));
 
-const jsonLd = breadcrumbSchema([
-  { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
-  { name: 'Categories', url: 'https://library.en.seed.ua/categories/' },
-]);
+const description = `Browse ${VARIETIES.length} heirloom tomato cultivars across ${categories.length} morphological categories — from rare collectibles to dwarf varieties.`;
+
+const jsonLd = [
+  webPageSchema({
+    path: '/categories/',
+    name: 'Tomato Cultivar Categories',
+    description,
+    type: 'CollectionPage',
+  }),
+  breadcrumbSchema([
+    { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
+    { name: 'Categories', url: 'https://library.en.seed.ua/categories/' },
+  ]),
+];
 ---
 
 <BaseLayout
   title="Categories"
-  description="Browse 331 heirloom tomato cultivars across 11 morphological categories — from rare collectibles to dwarf varieties."
+  description={description}
   jsonLd={jsonLd}
 >
   <div class="container">

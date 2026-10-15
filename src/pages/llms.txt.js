@@ -6,9 +6,14 @@ import {
   CATEGORY_LABEL,
   CATEGORY_CODE,
   CATEGORY_DESCRIPTION,
+  CATALOGUE_EDITION,
+  CATALOGUE_MODIFIED_DATE,
+  PUBLISHER,
 } from '../utils/varieties';
 
 const SITE = 'https://library.en.seed.ua';
+
+export const prerender = true;
 
 function tagTokens(variety) {
   return (variety.tags || '').split(/\s+/).filter(Boolean);
@@ -30,11 +35,23 @@ export async function GET() {
 
 > A scientific catalogue of ${totalCount} open-pollinated heirloom tomato cultivars from the Lazariev family seed collection in Ukraine (established 1991). Each entry documents plant height, fruit weight, fruit form, colour profile, and growth notes. ${verifiedCount} cultivars have canonical English heirloom names verified via Tatiana TOMATObase, Baker Creek, and the Dwarf Tomato Project.
 
-The Lazariev collection is one of the largest documented heirloom tomato libraries in Eastern Europe, with particular strength in Ukrainian, Russian, and Eastern European cultivars not commonly available in Western catalogues. Seeds are available internationally via en.seed.ua.
+The Lazariev collection documents Ukrainian and other Eastern European heirloom tomato cultivars alongside international varieties. See individual catalogue records for recorded measurements and name verification. International seed enquiries: en.seed.ua.
+
+## Entity profile
+
+- **Publisher**: ${PUBLISHER.name}, Lazariev family seed company, Ukraine
+- **Founded**: ${PUBLISHER.foundingDate}
+- **Primary domain**: ${PUBLISHER.url}
+- **International shop**: ${PUBLISHER.internationalUrl}
+- **Catalogue domain**: ${SITE}
+- **Edition**: ${CATALOGUE_EDITION}
+- **Last updated**: ${CATALOGUE_MODIFIED_DATE}
+- **Editorial contact**: ${PUBLISHER.email}
 
 ## Complete catalogue
 
 - [Full catalogue as Markdown](${SITE}/llms-full.txt): All ${totalCount} cultivars with descriptions, measurements, and classifications in a single file
+- [Structured AI index as JSON](${SITE}/llms.json): Entity profile, category map, filter dimensions, and cultivar records
 - [Master Index (A-Z)](${SITE}/varieties/): Searchable alphabetical index of all cultivars
 - [Category index](${SITE}/categories/): Browse the catalogue by morphological and collection category
 - [Title page](${SITE}/): Catalogue overview with statistics and contents

@@ -6,7 +6,10 @@ import {
   CATEGORY_CODE,
   CATEGORY_DESCRIPTION,
   categorySchema,
+  categoryFaq,
   breadcrumbSchema,
+  faqSchema,
+  webPageSchema,
 } from '../../utils/varieties';
 
 export function getStaticPaths() {
@@ -23,9 +26,21 @@ const varieties = VARIETIES.filter(v => v.cat === catSlug)
 const catLabel = CATEGORY_LABEL[catSlug];
 const catCode = CATEGORY_CODE[catSlug];
 const catDescription = CATEGORY_DESCRIPTION[catSlug];
+const description = `${catDescription} — ${varieties.length} cultivars in the Lazariev heirloom collection.`;
+const faqItems = categoryFaq(catSlug, varieties.length);
 
 const jsonLd = [
   categorySchema(catSlug, varieties),
+  webPageSchema({
+    path: `/categories/${catSlug}/`,
+    name: `${catLabel} tomato cultivars`,
+    description,
+    type: 'CollectionPage',
+    mainEntity: {
+      '@id': `https://library.en.seed.ua/categories/${catSlug}/#collection`,
+    },
+  }),
+  faqSchema(faqItems),
   breadcrumbSchema([
     { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
     { name: 'Categories', url: 'https://library.en.seed.ua/categories/' },
@@ -36,7 +51,7 @@ const jsonLd = [
 
 <BaseLayout
   title={`${catLabel} cultivars`}
-  description={`${catDescription} — ${varieties.length} cultivars in the Lazariev heirloom collection.`}
+  description={description}
   jsonLd={jsonLd}
 >
 
@@ -112,6 +127,20 @@ const jsonLd = [
           <a href={`/categories/${c}/`} class="cat-related-link">
             {CATEGORY_LABEL[c]}
           </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="cat-faq-section">
+    <div class="container">
+      <div class="cat-faq-label">Quick answers</div>
+      <div class="cat-faq-list">
+        {faqItems.map(item => (
+          <details class="cat-faq-item">
+            <summary>{item.question}</summary>
+            <p>{item.answer}</p>
+          </details>
         ))}
       </div>
     </div>
@@ -272,5 +301,46 @@ const jsonLd = [
     color: var(--paper);
     background: var(--ink);
     border-color: var(--ink);
+  }
+
+  .cat-faq-section {
+    padding: 48px 0 80px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .cat-faq-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+
+  .cat-faq-list {
+    max-width: 760px;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  .cat-faq-item {
+    border-bottom: 1px solid var(--rule-soft);
+    padding: 18px 0;
+  }
+
+  .cat-faq-item summary {
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .cat-faq-item p {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-top: 12px;
+    padding-left: 20px;
   }
 </style>

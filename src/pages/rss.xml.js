@@ -1,6 +1,8 @@
 import rss from '@astrojs/rss';
 import { VARIETIES } from '../utils/varieties';
 
+export const prerender = true;
+
 export async function GET(context) {
   // Most recently added/recovered first (for RSS)
   const items = VARIETIES.slice(0, 50).map(v => ({

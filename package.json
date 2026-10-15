@@ -9,11 +9,13 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "import-data": "node scripts/import-from-excel.mjs"
+    "import-data": "node scripts/import-from-excel.mjs",
+    "seo:audit": "npm run build && node scripts/seo-geo-audit.mjs",
+    "seo:audit:built": "node scripts/seo-geo-audit.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.7",
-    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/sitemap": "3.2.1",
     "astro": "^4.16.0"
   },
   "devDependencies": {

@@ -1,0 +1,22 @@
+/* TEAM */
+Publisher: Seed.ua / Lazariev family seed company
+Catalogue editorial: elena@lazareva.info
+Country: Ukraine
+Founded: 1991
+
+/* SITE */
+Site: Catalogue of Solanum lycopersicum
+Domain: https://library.en.seed.ua
+Primary shop: https://seed.ua
+International shop: https://en.seed.ua
+Edition: 2026.01
+Last updated: 2026-06-12
+Language: English
+
+/* DATA */
+Scope: 331 open-pollinated heirloom tomato cultivars from the Lazariev collection.
+Fields: cultivar names, plant height, fruit weight, fruit form, fruit colour, growth notes, canonical English name verification.
+Machine-readable index: https://library.en.seed.ua/llms.json
+LLM guide: https://library.en.seed.ua/llms.txt
+Complete LLM catalogue: https://library.en.seed.ua/llms-full.txt
+Sitemap: https://library.en.seed.ua/sitemap-index.xml

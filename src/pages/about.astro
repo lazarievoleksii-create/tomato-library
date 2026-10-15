@@ -1,19 +1,28 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { VARIETIES, breadcrumbSchema } from '../utils/varieties';
+import { VARIETIES, CATALOGUE_EDITION, CATALOGUE_MODIFIED_DATE, breadcrumbSchema, webPageSchema } from '../utils/varieties';
 
 const verifiedCount = VARIETIES.filter(v => v.has_canonical_en).length;
-const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const today = new Date(`${CATALOGUE_MODIFIED_DATE}T00:00:00Z`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const description = 'Methodology, sources, editorial process, and citation information for the Catalogue of Solanum lycopersicum — Lazariev heirloom tomato library.';
 
-const jsonLd = breadcrumbSchema([
-  { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
-  { name: 'Colophon', url: 'https://library.en.seed.ua/about/' },
-]);
+const jsonLd = [
+  webPageSchema({
+    path: '/about/',
+    name: 'Colophon and methodology',
+    description,
+    type: 'AboutPage',
+  }),
+  breadcrumbSchema([
+    { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
+    { name: 'Colophon', url: 'https://library.en.seed.ua/about/' },
+  ]),
+];
 ---
 
 <BaseLayout
   title="Colophon · About this catalogue"
-  description="Methodology, sources, and citation information for the Catalogue of Solanum lycopersicum — Lazariev heirloom tomato library."
+  description={description}
   jsonLd={jsonLd}
 >
 
@@ -125,13 +134,34 @@ const jsonLd = breadcrumbSchema([
           <div class="citation-box">
             <div class="citation-text">
               Lazariev, O., Lazarieva, O. (2026). <em>Catalogue of Solanum lycopersicum:
-              Lazariev Heirloom Tomato Library, Volume I, Edition 2026.01.</em>
+              Lazariev Heirloom Tomato Library, Volume I, Edition {CATALOGUE_EDITION}.</em>
               Seed.ua, Ukraine. Retrieved from https://library.en.seed.ua/
             </div>
             <button class="citation-copy" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText); this.textContent='Copied'">
               Copy citation
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="col-section bordered">
+    <div class="container">
+      <div class="col-grid">
+        <div class="col-label">Editorial process</div>
+        <div class="col-body">
+          <p>
+            Entries are compiled from the source catalogue, checked for internal consistency, and
+            cross-referenced against public cultivar databases where canonical English names exist.
+            Measurements are preserved as catalogue observations rather than converted into claims
+            of guaranteed garden performance.
+          </p>
+          <p>
+            Corrections are handled at the catalogue level: cultivar names, measurements, source notes,
+            and shop links may be updated in later editions when stronger evidence becomes available.
+            Readers can report suspected errors through the catalogue editorial contact below.
+          </p>
         </div>
       </div>
     </div>
@@ -162,7 +192,7 @@ const jsonLd = breadcrumbSchema([
       <div class="col-version">
         <div class="version-row">
           <span class="version-label">Edition</span>
-          <span class="version-value">2026.01</span>
+          <span class="version-value">{CATALOGUE_EDITION}</span>
         </div>
         <div class="version-row">
           <span class="version-label">Last updated</span>

@@ -1,6 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { VARIETIES, CATEGORY_LABEL, CATEGORY_CODE, CATEGORY_DESCRIPTION } from '../utils/varieties';
+import {
+  VARIETIES,
+  CATEGORY_LABEL,
+  CATEGORY_CODE,
+  CATEGORY_DESCRIPTION,
+  CATALOGUE_EDITION,
+  CATALOGUE_PUBLICATION_DATE,
+  datasetSchema,
+  webPageSchema,
+} from '../utils/varieties';
 
 const totalCount = VARIETIES.length;
 const verifiedCount = VARIETIES.filter(v => v.has_canonical_en).length;
@@ -14,13 +23,16 @@ const byCategory = Object.keys(CATEGORY_CODE).map(catSlug => ({
   count: VARIETIES.filter(v => v.cat === catSlug).length,
 }));
 
-const jsonLd = {
+const description = `Scientific catalogue of ${totalCount} heirloom and open-pollinated tomato cultivars from the Lazariev collection (Ukraine, est. 1991). Browse by category, compare cultivars, and access seeds via Seed.ua.`;
+
+const bookSchema = {
   '@context': 'https://schema.org',
   '@type': 'Book',
   name: 'Catalogue of Solanum lycopersicum',
   alternateName: 'Lazariev Heirloom Tomato Library',
-  bookEdition: '2026.01',
+  bookEdition: CATALOGUE_EDITION,
   inLanguage: 'en',
+  datePublished: CATALOGUE_PUBLICATION_DATE,
   publisher: {
     '@type': 'Organization',
     name: 'Seed.ua',
@@ -34,11 +46,24 @@ const jsonLd = {
   numberOfPages: totalCount,
   url: 'https://library.en.seed.ua/',
 };
+
+const jsonLd = [
+  bookSchema,
+  datasetSchema(),
+  webPageSchema({
+    path: '/',
+    name: 'Catalogue of Solanum lycopersicum',
+    description,
+    mainEntity: {
+      '@id': 'https://library.en.seed.ua/#dataset',
+    },
+  }),
+];
 ---
 
 <BaseLayout
   title="Catalogue of Solanum lycopersicum"
-  description="Scientific catalogue of 331 heirloom and open-pollinated tomato cultivars from the Lazariev collection (Ukraine, est. 1991). Browse by category, compare cultivars, and access seeds via Seed.ua."
+  description={description}
   jsonLd={jsonLd}
 >
 
@@ -46,7 +71,7 @@ const jsonLd = {
   <section class="title-page">
     <div class="container">
       <div class="title-meta">
-        <div class="meta-line">Volume I · Edition 2026.01</div>
+        <div class="meta-line">Volume I · Edition {CATALOGUE_EDITION}</div>
         <div class="meta-line accent">Lazariev Collection · Established 1991</div>
       </div>
 

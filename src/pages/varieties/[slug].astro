@@ -2,13 +2,17 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import {
   VARIETIES,
-  getFullVarietyByName,
+  getFullVariety,
   getRelatedVarieties,
   varietySchema,
   breadcrumbSchema,
-  CATEGORY_LABEL,
   habitLabel,
   sizeClassLabel,
+  CATALOGUE_EDITION,
+  compactDescription,
+  faqSchema,
+  varietyFaq,
+  webPageSchema,
 } from '../../utils/varieties';
 
 export function getStaticPaths() {
@@ -19,26 +23,37 @@ export function getStaticPaths() {
 }
 
 const { variety } = Astro.props;
-const full = getFullVarietyByName(variety.name_uk);
+const full = getFullVariety(variety);
 const related = getRelatedVarieties(variety, 4);
 
 const dominantColor = (variety.colors && variety.colors[0]) || 'unspecified';
+const description = full?.description || variety.note || `${variety.name_en} (${variety.name_uk}) — ${variety.cat_label} tomato cultivar from the Lazariev heirloom collection.`;
+const metaDescription = compactDescription(description || `${variety.name_en} tomato cultivar profile from Seed.ua.`, 158);
+const faqItems = varietyFaq(variety, full);
 
 const jsonLd = [
   varietySchema(variety, full),
+  webPageSchema({
+    path: `/varieties/${variety.slug}/`,
+    name: `${variety.name_en} — ${variety.cat_label} tomato cultivar`,
+    description: metaDescription,
+    type: 'ItemPage',
+    mainEntity: {
+      '@id': `https://library.en.seed.ua/varieties/${variety.slug}/#cultivar`,
+    },
+  }),
+  faqSchema(faqItems),
   breadcrumbSchema([
     { name: 'Catalogue', url: 'https://library.en.seed.ua/' },
     { name: 'Varieties', url: 'https://library.en.seed.ua/varieties/' },
     { name: variety.name_en, url: `https://library.en.seed.ua/varieties/${variety.slug}/` },
   ]),
 ];
-
-const description = full?.description || variety.note || `${variety.name_en} (${variety.name_uk}) — ${variety.cat_label} tomato cultivar from the Lazariev heirloom collection.`;
 ---
 
 <BaseLayout
   title={`${variety.name_en} — ${variety.cat_label}`}
-  description={description}
+  description={metaDescription}
   jsonLd={jsonLd}
 >
 
@@ -170,7 +185,7 @@ const description = full?.description || variety.note || `${variety.name_en} (${
               <h2 class="section-title">Cataloguing note</h2>
               <p class="cataloguing-note">
                 The full name of this cultivar was recovered from the original Ukrainian source material
-                (catalog edition 2026.01) where the entry was previously listed in abbreviated form as
+                (catalog edition {CATALOGUE_EDITION}) where the entry was previously listed in abbreviated form as
                 <em>"{full._recovered_from}"</em>.
               </p>
             </div>
@@ -185,6 +200,18 @@ const description = full?.description || variety.note || `${variety.name_en} (${
             <a href={`https://en.seed.ua/products/${variety.slug}`} class="cta-link" target="_blank" rel="noopener">
               View on en.seed.ua →
             </a>
+          </div>
+
+          <div class="content-section faq-section">
+            <h2 class="section-title">Quick answers</h2>
+            <div class="faq-list">
+              {faqItems.map(item => (
+                <details class="faq-item">
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
+            </div>
           </div>
 
         </section>
@@ -426,6 +453,38 @@ const description = full?.description || variety.note || `${variety.name_en} (${
   .cta-link:hover {
     background: var(--accent);
     color: var(--paper);
+  }
+
+  .faq-section {
+    margin-top: 56px;
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--rule-soft);
+    max-width: 720px;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--rule-soft);
+    padding: 18px 0;
+  }
+
+  .faq-item summary {
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    list-style-position: outside;
+  }
+
+  .faq-item p {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-top: 12px;
+    padding-left: 20px;
   }
 
   /* Related */
